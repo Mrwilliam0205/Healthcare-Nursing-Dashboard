@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nursemaid初始設定網頁</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <script language="javascript">
+    function checkForm() {
+      var frm = document.forms["theForm"];
+      if (frm.username.value == "") {
+        alert("Username is null.");
+        return false;
+      }else if (frm.password.value ==""){
+        alert("Password is null.");
+        return false;
+      }else if(frm.YourLocation.value ==""){
+        alert("Localtion is null.");
+        return false;
+      }
+      else{
+        return ture;
+      }
+    }
+  </script>
+
+
+
+</head>
+
+<body>
+  <form  method="POST"  id= "theForm" onSubmit="return checkForm(this);" action="go.php">
+    <table>
+      <tr>
+        <td>時區設置：</td>　
+        <td>
+          <select name="YourArea" id="Area">
+            <option value=16>亞洲</option>
+            <option value=2>美洲</option>
+            <option value=128>歐洲</option>
+            <option value=64>澳洲</option>
+            <option value=256>印度</option>
+            <option value=1>非洲</option>
+          </select>
+
+
+          <select name="YourLocation" id="location">
+            <option value="Asia/Taipei">Asia/Taipei</option>
+          </select>
+        </td>
+      </tr>
+
+      <tr>
+        <td>資料庫帳號：</td>
+        <td><input type="text" value="root" name="username" autocomplete="off"></input></td>
+      </tr>
+
+      <tr>
+        <td>資料庫密碼：</td>
+        <td><input type="password" name="password" autocomplete="off" /></td>
+      </tr>
+
+      <tr>
+        <td><input type="submit" value="送出"  ></td>
+      </tr>
+    </table>
+  </form>
+
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("select#Area").change(function () {
+        $("#location").empty();       //清空select
+        var area_op = $('#Area').val();
+        $.ajax({
+          type: "GET", //傳送方式
+          url: "http://localhost/Nursemaid_pro_sitting/login_database/getLocation.php", //傳送目的地
+          dataType: "json", //資料格式
+          data: {area: area_op}, //傳送資料
+          success: function (data) {
+            //var jsonObj = JSON.parse(data);
+            var jsonObj = data.tis;
+            console.log(data);
+            $("[id$=location]").append($("<option></option>").text(""));
+            for (var i = 0; i < jsonObj.length; i++) {
+              console.log(jsonObj[i]);
+              //將取得的Json一筆一筆放入清單
+              $("[id$=location]").append($("<option></option>").text(jsonObj[i]));
+            }
+
+          },
+          error: function (jqXHR) {
+            // $("#demo")[0].reset(); //重設 ID 為 demo 的 form (表單)
+            $("#result").html('<font color="#ff0000">發生錯誤：' + jqXHR.status + '</font>');
+          }
+        })
+
+
+      })
+    });
+  </script>
+
+
+
+
+
+</body>
+
+</html>
